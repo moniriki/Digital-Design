@@ -1,5 +1,12 @@
 // -----------------------------------------------------------------------------
-// tb_sync_fifo — self-checking testbench for sync_fifo
+// tb_sync_fifo — self-checking testbench for a synchronous FIFO
+//
+// Drives any FIFO that presents this valid/ready interface:
+//   #(WIDTH, DEPTH, data_t) (i_clk, i_reset_n,
+//     i_wr_valid, o_wr_ready, i_wr_data,
+//     o_rd_valid, i_rd_ready, o_rd_data, o_full, o_empty)
+// The module under test is selected by the FIFO_MODULE macro (default
+// sync_fifo); override it to point at any compatible implementation.
 //
 // A behavioral queue serves as the golden reference model and is compared
 // against the DUT cycle by cycle under directed + randomized valid/ready
@@ -15,18 +22,25 @@
 //   WIDTH, DEPTH, N_CYCLES
 //
 // Compile defines:
-//   +define+SIM        enable the DUT's elaboration guard assertion
-//   +define+USE_STRUCT drive a packed-struct type through the `data_t`
-//                      parameter instead of a plain vector
+//   +define+FIFO_MODULE=<name>  module under test (default sync_fifo)
+//   +define+SIM                 enable the DUT's elaboration guard assertion
+//   +define+USE_STRUCT          drive a packed-struct type through the
+//                               `data_t` parameter instead of a plain vector
 //
-// Example (Icarus Verilog):
+// Example (Icarus Verilog), run from the fifos/ directory:
 //   iverilog -g2012 -DSIM -o sim tb/tb_sync_fifo.sv sync_fifo.sv && vvp sim
 //   iverilog -g2012 -DSIM -Ptb_sync_fifo.DEPTH=16 -o sim tb/tb_sync_fifo.sv sync_fifo.sv && vvp sim
 //   iverilog -g2012 -DSIM -DUSE_STRUCT -o sim tb/tb_sync_fifo.sv sync_fifo.sv && vvp sim
+//   iverilog -g2012 -DSIM -DFIFO_MODULE=sync_fifo_variable_depth -Ptb_sync_fifo.DEPTH=13 \
+//            -o sim tb/tb_sync_fifo.sv sync_fifo_variable_depth.sv && vvp sim
 //
 // Pass criterion: "RESULT: PASS" with errors == 0 and the model fully drained.
 // -----------------------------------------------------------------------------
 `timescale 1ns/1ps
+
+`ifndef FIFO_MODULE
+  `define FIFO_MODULE sync_fifo
+`endif
 
 module tb_sync_fifo;
 
@@ -57,7 +71,7 @@ module tb_sync_fifo;
   int unsigned n_pushed = 0;
   int unsigned n_popped = 0;
 
-  sync_fifo #(.WIDTH(WIDTH), .DEPTH(DEPTH), .data_t(DT)) dut (
+  `FIFO_MODULE #(.WIDTH(WIDTH), .DEPTH(DEPTH), .data_t(DT)) dut (
     .i_clk      (clk),
     .i_reset_n  (rst_n),
     .i_wr_valid (i_wr_valid),
