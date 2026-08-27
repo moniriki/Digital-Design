@@ -49,7 +49,7 @@ module round_robin_arb_ptr # (
 
 endmodule
 
-module tt_round_robin_arb # (
+module round_robin_arb # (
     parameter int unsigned WIDTH = 4
 ) (
     input logic i_clk,

@@ -29,7 +29,7 @@ module bin_tree_2arb_block (
 
 endmodule
 
-module tt_bin_tree_arb_4 (
+module bin_tree_arb_4 (
     input logic i_clk,
     input logic i_reset_n,
     input logic [4-1:0] i_request,

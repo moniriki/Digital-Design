@@ -76,7 +76,7 @@ module nxn_matrix_lru_arb_complex # (
 
 endmodule
 
-module tt_nxn_matrix_lru_arb # (
+module nxn_matrix_lru_arb # (
     parameter int unsigned WIDTH = 4
 ) (
     input logic i_clk,
