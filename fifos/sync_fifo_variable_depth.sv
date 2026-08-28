@@ -1,7 +1,7 @@
 module sync_fifo_variable_depth # (
     parameter int unsigned WIDTH = 32,
     parameter int unsigned DEPTH = 8,
-    parameter type data_t = logic [WIDTH-1:0],
+    parameter type dtype_t = logic [WIDTH-1:0],
     localparam int unsigned PTR_W = (DEPTH > 1) ? $clog2(DEPTH) : 1,
     localparam int unsigned COUNT_W = PTR_W + 1
 ) (
@@ -10,16 +10,16 @@ module sync_fifo_variable_depth # (
 
     input logic i_wr_valid,
     output logic o_wr_ready,
-    input data_t i_wr_data,
+    input dtype_t i_wr_data,
     output logic o_rd_valid,
     input logic i_rd_ready,
-    output data_t o_rd_data,
+    output dtype_t o_rd_data,
 
     output logic o_full,
     output logic o_empty
 );
 
-    data_t fifo [0:DEPTH-1];
+    dtype_t fifo [0:DEPTH-1];
     logic [PTR_W-1:0] wr_ptr, rd_ptr;
     logic [COUNT_W-1:0] count_q, count_d;
 
