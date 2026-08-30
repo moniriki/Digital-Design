@@ -8,7 +8,8 @@
  * the source.
 */
 module pulse_sync # (
-    parameter MAX_CNT = 1024, // Must be power of 2 for this module to work
+    parameter int unsigned MAX_CNT = 1024, // Must be power of 2 for this module to work
+    parameter bit ASYNC_BOUNDARY = 1'b1,
     localparam MAX_CNT_W = $clog2(MAX_CNT)
 ) (
     input logic i_src_clk,
@@ -91,29 +92,43 @@ module pulse_sync # (
         end
     end
 
-    sync3 #(
-        .WIDTH(MAX_CNT_W + 1)
-    ) rd_ptr_sync_src_side (
-        .i_clk(i_src_clk),
-        .i_reset_n(i_src_reset_n),
-        .i_d(dst_rd_ptr_gray),
-        .o_q(src_rd_ptr_gray)
-    );
+    generate
 
-    assign src_rd_ptr = gray2bin(src_rd_ptr_gray);
+        if (ASYNC_BOUNDARY) begin: gray_counters
+
+            sync3 #(
+                .WIDTH(MAX_CNT_W + 1)
+            ) rd_ptr_sync_src_side (
+                .i_clk(i_src_clk),
+                .i_reset_n(i_src_reset_n),
+                .i_d(dst_rd_ptr_gray),
+                .o_q(src_rd_ptr_gray)
+            );
+
+            assign src_rd_ptr = gray2bin(src_rd_ptr_gray);
+
+            sync3 #(
+                .WIDTH(MAX_CNT_W + 1)
+            ) wr_ptr_sync_dst_side (
+                .i_clk(i_dst_clk),
+                .i_reset_n(i_dst_reset_n),
+                .i_d(src_wr_ptr_gray),
+                .o_q(dst_wr_ptr_gray)
+            );
+
+            assign dst_wr_ptr = gray2bin(dst_wr_ptr_gray);
+
+        end else begin: sync_counters
+
+            // Gray counters gets synthesized out as it should be unused
+            assign src_rd_ptr = dst_rd_ptr_q;
+            assign dst_wr_ptr = src_wr_ptr_q;
+
+        end
+
+    endgenerate
 
     // Destination side
-
-    sync3 #(
-        .WIDTH(MAX_CNT_W + 1)
-    ) wr_ptr_sync_dst_side (
-        .i_clk(i_dst_clk),
-        .i_reset_n(i_dst_reset_n),
-        .i_d(src_wr_ptr_gray),
-        .o_q(dst_wr_ptr_gray)
-    );
-
-    assign dst_wr_ptr = gray2bin(dst_wr_ptr_gray);
 
     always_ff @(posedge i_dst_clk) begin
         if (~i_dst_reset_n) begin
