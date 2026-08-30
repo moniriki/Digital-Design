@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-// tb_clk_gate — self-checking testbench for the clk_gate module
+// tb_clkgate — self-checking testbench for the clkgate module
 //
 // Verifies the latch-then-AND clock gate is glitch-free:
 //   - o_clk is a defined 0 while i_en is held low
@@ -13,8 +13,8 @@
 //                              is provided below; swap in the real cell model)
 //
 // Run from clock_common/:
-//   iverilog -g2012 -o sim tb/tb_clk_gate.sv clk_gate.sv && vvp sim
-//   iverilog -g2012 -DFOUNDRY_LIBCELL -o sim tb/tb_clk_gate.sv clk_gate.sv && vvp sim
+//   iverilog -g2012 -o sim tb/tb_clkgate.sv clkgate.sv && vvp sim
+//   iverilog -g2012 -DFOUNDRY_LIBCELL -o sim tb/tb_clkgate.sv clkgate.sv && vvp sim
 //
 // Pass criterion: "RESULT: PASS" with errors == 0.
 // -----------------------------------------------------------------------------
@@ -30,11 +30,11 @@ module libcell_clkgate (input logic i_CK, input logic i_E, output logic o_CK);
 endmodule
 `endif
 
-module tb_clk_gate;
+module tb_clkgate;
   parameter int unsigned T_PS = 1000;
 
   logic i_clk = 0, i_en, o_clk;
-  clk_gate dut (.i_clk(i_clk), .i_en(i_en), .o_clk(o_clk));
+  clkgate dut (.i_clk(i_clk), .i_en(i_en), .o_clk(o_clk));
 
   always #(T_PS/2) i_clk = ~i_clk;
 
