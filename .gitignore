@@ -1,0 +1,17 @@
+# Simulation build artifacts
+*.vvp
+*.vcd
+*.fst
+*.out
+obj_dir/
+sim
+a.out
+
+# Editor / OS
+*.swp
+*~
+.DS_Store
+
+# Local scratch — never commit
+scratch/
+*.local.*
