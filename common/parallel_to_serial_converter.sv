@@ -1,5 +1,12 @@
-module parallel_to_serial_convertor # (
-    parameter int unsigned DATA_WIDTH = 4,
+// Parallel-in, serial-out shifter with valid/ready on both sides.
+//
+// Accepts a DATA_WIDTH-bit word when idle (o_ready high) and shifts it out one
+// bit per cycle, LSB first, on o_data while o_valid is high. o_data advances
+// only when the sink accepts (i_ready); it holds otherwise. o_ready reasserts
+// the cycle after the last bit leaves, so throughput is one word every
+// DATA_WIDTH+1 cycles.
+module parallel_to_serial_converter #(
+    parameter  int unsigned DATA_WIDTH      = 4,
     localparam int unsigned DATA_WIDTH_LOG2 = $clog2(DATA_WIDTH)
 ) (
     input logic i_clk,

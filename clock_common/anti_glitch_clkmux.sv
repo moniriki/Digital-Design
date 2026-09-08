@@ -15,9 +15,9 @@
 //   * BOTH clocks must be running for a switch to complete. If the target
 //     clock is stopped, the handover never finishes: o_clk parks off (low)
 //     until that clock returns, then the switch completes.
-//   * After reset, i_clk0 is selected (sel_clk0 resets to 1). The reset values
-//     of the synchronized copies are made consistent via sync3s (set to 1) on
-//     the clk0 path and sync3r (reset to 0) on the clk1 path.
+//   * After reset, i_clk0 is selected (sel_clk0 resets to 1). The synchronized
+//     copies reset to matching values via sync's RESET_VAL parameter: 1 on the
+//     clk0 select path, 0 on the clk1 select path.
 //
 // For a glitch on i_sel to be acceptable is NOT a valid use of this module --
 // that is what clkmux2 is for. Use this when o_clk must stay clean across the
@@ -54,14 +54,14 @@ module anti_glitch_clkmux (
         end
     end
 
-    sync3s sync_sel_clk0 (
+    sync #(.RESET_VAL(1'b1), .RESET_ASYNC(1'b1)) sync_sel_clk0 (
         .i_clk(i_clk1),
         .i_reset_n(i_reset_n),
         .i_d(sel_clk0),
         .o_q(sel_clk0_sync)
     );
 
-    sync3r sync_sel_clk1 (
+    sync #(.RESET_VAL(1'b0), .RESET_ASYNC(1'b1)) sync_sel_clk1 (
         .i_clk(i_clk0),
         .i_reset_n(i_reset_n),
         .i_d(sel_clk1),

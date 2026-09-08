@@ -1,11 +1,16 @@
-// Should be used for values of N > 2. Must only be used
-// for even N. Odd N requires duty cycle mismatch handling
-module clkdiv_sync # (
-    parameter int unsigned N = 8,
+// Divide-by-N clock from a single counter (not a chain of clkdiv2), so o_clk
+// has one clock-to-Q of delay from i_clk regardless of N -- unlike clkdiv4 /
+// clkdiv8, whose cascaded flops add skew down the tree.
+//
+// N must be even and >= 2 (checked below): the counter runs 0..N/2-1 and the
+// output toggles each wrap, giving a 50% duty clock at i_clk/N. Odd N would
+// need explicit duty-cycle handling and is not supported.
+module clkdiv_sync #(
+    parameter  int unsigned N     = 8,
     localparam int unsigned CNT_W = $clog2(N)
 ) (
-    input logic i_clk,
-    input logic i_reset_n,
+    input  logic i_clk,
+    input  logic i_reset_n,
     output logic o_clk
 );
 
@@ -24,6 +29,8 @@ module clkdiv_sync # (
 
     assign o_clk = toggle;
 
+`ifdef SIM
     initial assert ((N >= 2) && ((N & 1) == 0))
-        else $fatal(1, "clkdiv_sync - N must be >= 2 and an even number");
+        else $fatal(1, "clkdiv_sync: N must be an even number >= 2");
+`endif
 endmodule

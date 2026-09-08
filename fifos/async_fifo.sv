@@ -52,7 +52,7 @@ module async_fifo #(
     // Synchronize pointers to each side
 
     // Write pointer sync to read side
-    sync3 #(
+    sync #(
         .WIDTH(CNT_W + 1)
     ) wr_ptr_sync_read_side (
         .i_clk(i_rd_clk),
@@ -64,7 +64,7 @@ module async_fifo #(
     assign rd_side_wr_ptr_b = gray2bin(rd_side_wr_ptr_g);
 
     // Read pointer sync to write side
-    sync3 #(
+    sync #(
         .WIDTH(CNT_W + 1)
     ) rd_ptr_sync_write_side (
         .i_clk(i_wr_clk),

@@ -1,23 +1,24 @@
-/* Synchronizes pulses from source to destination clock domains
- * Error output results when number of input pulses cannot be kept
- * up with. Sizing the MAX_CNT to a large enough number should avoid
- * any real workload error conditions. Credit counters may also be
- * used on the source side pulse generation to ensure we never overflow.
- * Credit counters would require this module to output a o_ready that
- * indicates when it has accepted a pulse in order to add credits to
- * the source.
-*/
-module pulse_sync # (
-    parameter int unsigned MAX_CNT = 1024, // Must be power of 2 for this module to work
-    parameter bit ASYNC_BOUNDARY = 1'b1,
-    localparam MAX_CNT_W = $clog2(MAX_CNT)
+// Pulse synchronizer: one i_pulse in i_src_clk produces one o_pulse in
+// i_dst_clk. A source write pointer and a destination read pointer count
+// pulses; the difference is the number in flight. With ASYNC_BOUNDARY the
+// pointers are gray-coded and passed through `sync` (true CDC); without it they
+// cross directly (synchronous domains only).
+//
+// The source drops pulses once MAX_CNT are outstanding and latches o_error
+// (sticky). Size MAX_CNT for the worst-case burst versus the destination
+// drain rate, or add source-side credit counting to make it lossless.
+// MAX_CNT must be a power of two for the gray counters to wrap correctly.
+module pulse_sync #(
+    parameter  int unsigned MAX_CNT        = 1024,
+    parameter  bit          ASYNC_BOUNDARY = 1'b1,
+    localparam int unsigned MAX_CNT_W      = $clog2(MAX_CNT)
 ) (
-    input logic i_src_clk,
-    input logic i_src_reset_n,
-    input logic i_pulse,
+    input  logic i_src_clk,
+    input  logic i_src_reset_n,
+    input  logic i_pulse,
 
-    input logic i_dst_clk,
-    input logic i_dst_reset_n,
+    input  logic i_dst_clk,
+    input  logic i_dst_reset_n,
     output logic o_pulse,
     output logic o_error
 );
@@ -37,7 +38,7 @@ module pulse_sync # (
     endfunction
 
     logic [MAX_CNT_W:0] src_wr_ptr_q, src_wr_ptr_d, src_wr_ptr_gray, src_rd_ptr, src_rd_ptr_gray;
-    logic [MAX_CNT_W:0] dst_rd_ptr_q, dst_rd_ptr_d, dst_rd_ptr_gray, dst_wr_ptr, dst_wr_ptr_gray; 
+    logic [MAX_CNT_W:0] dst_rd_ptr_q, dst_rd_ptr_d, dst_rd_ptr_gray, dst_wr_ptr, dst_wr_ptr_gray;
 
     logic [MAX_CNT_W:0] src_side_delta, dst_side_delta;
     logic src_side_max_delta_reached;
@@ -96,7 +97,7 @@ module pulse_sync # (
 
         if (ASYNC_BOUNDARY) begin: gray_counters
 
-            sync3 #(
+            sync #(
                 .WIDTH(MAX_CNT_W + 1)
             ) rd_ptr_sync_src_side (
                 .i_clk(i_src_clk),
@@ -107,7 +108,7 @@ module pulse_sync # (
 
             assign src_rd_ptr = gray2bin(src_rd_ptr_gray);
 
-            sync3 #(
+            sync #(
                 .WIDTH(MAX_CNT_W + 1)
             ) wr_ptr_sync_dst_side (
                 .i_clk(i_dst_clk),
@@ -162,7 +163,9 @@ module pulse_sync # (
         end
     end
 
+`ifdef SIM
     initial assert ((MAX_CNT >= 2) && !(MAX_CNT & (MAX_CNT - 1)))
-        else $fatal(1, "pulse_sync - MAX_CNT must be a power of 2 >=2 in order for gray counters to work");
+        else $fatal(1, "pulse_sync: MAX_CNT must be a power of two >= 2");
+`endif
 
 endmodule

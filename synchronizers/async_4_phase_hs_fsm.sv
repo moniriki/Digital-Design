@@ -1,5 +1,5 @@
 // Implemented as an FSM
-module async_4_phase_hs_fsm # (
+module async_4_phase_hs_fsm #(
     parameter type dtype_t = logic
 ) (
     input logic i_src_clk,
@@ -39,7 +39,7 @@ module async_4_phase_hs_fsm # (
 
     // Source side logic
 
-    sync3 src_side_ack_sync (
+    sync src_side_ack_sync (
         .i_clk(i_src_clk),
         .i_reset_n(i_src_reset_n),
         .i_d(ack),
@@ -95,7 +95,7 @@ module async_4_phase_hs_fsm # (
 
     // Destination side logic
 
-    sync3 dst_side_req_sync (
+    sync dst_side_req_sync (
         .i_clk(i_dst_clk),
         .i_reset_n(i_dst_reset_n),
         .i_d(req),

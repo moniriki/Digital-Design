@@ -1,70 +1,27 @@
-module round_robin_arb_ptr # (
-    parameter int unsigned WIDTH = 4,
-    localparam int unsigned PTR_W = $clog2(WIDTH) + 1
-) (
-    input logic i_clk,
-    input logic i_reset_n,
-    input logic [WIDTH-1:0] i_request,
-    output logic [WIDTH-1:0] o_grant
-);
-
-    logic [WIDTH-1:0] grant;
-    logic [PTR_W-1:0] grant_ptr_q, grant_ptr_d;
-    logic [WIDTH-1:0] left_side_mask_q, left_side_mask_d;
-    logic [WIDTH-1:0] left_side_req, left_side_grant, full_grant;
-
-    always_ff @(posedge i_clk) begin
-        if (~i_reset_n) begin
-            grant_ptr_q <= '0;
-            left_side_mask_q <= '1; // Default out of reset
-        end else begin
-            grant_ptr_q <= grant_ptr_d;
-            left_side_mask_q <= left_side_mask_d;
-        end
-    end
-
-    always_comb begin
-        grant_ptr_d = grant_ptr_q;
-
-        if (|i_request) begin
-            for (int i = 1; i < (WIDTH + 1); i++) begin
-                if (grant[i - 1] == 1'b1) begin
-                    grant_ptr_d = PTR_W'(i);
-                end
-            end
-        end
-    end
-
-    always_comb begin
-        for (int i = 1; i < (WIDTH + 1); i++) begin
-            left_side_mask_d[i - 1] = (i > grant_ptr_d);
-        end
-    end
-
-    assign left_side_req = left_side_mask_q & i_request;
-    assign left_side_grant = left_side_req & ~(left_side_req - WIDTH'(1));
-    assign full_grant = i_request & ~(i_request - WIDTH'(1));
-    assign grant = |left_side_req ? left_side_grant : full_grant;
-    assign o_grant = grant;
-
-endmodule
-
-module round_robin_arb # (
+// Round-robin arbiter, masked-priority formulation.
+//
+// mask_q holds the set of requesters at or after the position just past the
+// last winner. Each cycle the arbiter grants the lowest set bit of
+// (i_request & mask_q); if nothing there is requesting it wraps and grants the
+// lowest set bit of i_request. After a grant, mask_q is rebuilt to exclude
+// everything up to and including the winner, so the next arbitration starts one
+// slot further around the ring. Every requester is served within one full
+// rotation -- no starvation.
+//
+// Single-cycle: o_grant is combinational from i_request and the registered
+// mask. No handshake.
+module round_robin_arb #(
     parameter int unsigned WIDTH = 4
 ) (
-    input logic i_clk,
-    input logic i_reset_n,
-    input logic [WIDTH-1:0] i_request,
+    input  logic             i_clk,
+    input  logic             i_reset_n,
+    input  logic [WIDTH-1:0] i_request,
     output logic [WIDTH-1:0] o_grant
 );
 
-    // Skip pointer logic, use bit-manip tricks
-    function automatic logic [WIDTH-1:0] my_prio (
-        input logic [WIDTH-1:0] i_mask
-    );
-
-        my_prio = i_mask & ~(i_mask - WIDTH'(1));
-
+    // Isolate the lowest set bit.
+    function automatic logic [WIDTH-1:0] lowest_set (input logic [WIDTH-1:0] mask);
+        lowest_set = mask & ~(mask - WIDTH'(1));
     endfunction
 
     logic [WIDTH-1:0] mask_q, mask_d;
@@ -79,12 +36,13 @@ module round_robin_arb # (
 
     always_comb begin
         mask_d = mask_q;
-
         if (|i_request) begin
+            // Everything strictly after this cycle's winner.
             mask_d = ~(o_grant | (o_grant - WIDTH'(1)));
         end
     end
 
-    assign o_grant = |(i_request & mask_q) ? my_prio(i_request & mask_q) : my_prio(i_request);
+    assign o_grant = |(i_request & mask_q) ? lowest_set(i_request & mask_q)
+                                           : lowest_set(i_request);
 
 endmodule

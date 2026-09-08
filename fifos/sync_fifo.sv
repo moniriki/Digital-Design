@@ -3,7 +3,7 @@
  * or empty status. If arbitrary depths are required, a counter implementation would suffice.
  */
 
-module sync_fifo # (
+module sync_fifo #(
     parameter int unsigned WIDTH = 32,
     parameter int unsigned DEPTH = 8, // Must be a power of 2, >= 2
     parameter type dtype_t = logic [WIDTH-1:0],

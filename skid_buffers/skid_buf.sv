@@ -1,3 +1,9 @@
+// Skid buffer: a two-entry valid/ready stage that breaks the combinational path
+// in both directions (o_valid/o_data are registered, o_ready is registered) at
+// the cost of one cycle of latency. Full throughput -- it accepts a new beat
+// every cycle the upstream offers one, using the second ("skid") entry to hold
+// the beat that arrives in the cycle the downstream first stalls. o_ready drops
+// only when both entries are occupied.
 module skid_buf #(
     parameter int unsigned WIDTH = 32
 ) (

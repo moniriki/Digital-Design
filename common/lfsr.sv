@@ -1,4 +1,12 @@
-module lfsr # (
+// Fibonacci (external-XOR) linear-feedback shift register.
+//
+// Each cycle the register shifts left and the new LSB is the XOR of the top two
+// bits (taps at WIDTH-1 and WIDTH-2). For WIDTH 3..7 that pair is a primitive
+// polynomial, so a non-zero seed walks all 2^WIDTH-1 non-zero states before
+// repeating; wider WIDTHs would need a different tap set for a maximal sequence.
+// The all-zeros state is a lock-up (XOR of zeros stays zero), so i_seed must be
+// non-zero -- it is loaded synchronously while i_reset_n is low.
+module lfsr #(
     parameter int unsigned WIDTH = 4
 ) (
     input logic i_clk,
