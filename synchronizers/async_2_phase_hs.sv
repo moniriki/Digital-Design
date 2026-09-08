@@ -1,5 +1,13 @@
-// Implements a 2-phase CDC handshake crossing
-module async_2_phase_hs # (
+// Two-phase (transition-signalling) request/acknowledge CDC crossing.
+//
+// A transfer is one toggle of req; the destination replies with one toggle of
+// ack. req and ack cross domains through `sync`. Because each transfer is a
+// single edge (not a return-to-zero pulse) it costs one synchronizer round
+// trip per beat -- lower latency than 4-phase but the two sides must agree on
+// the toggle convention. i_data is captured in the source domain while req is
+// stable and read on the destination side as a multi-cycle path; constrain it
+// with set_max_delay / set_bus_skew, not a synchronizer.
+module async_2_phase_hs #(
     parameter type dtype_t = logic
 ) (
     input logic i_src_clk,
@@ -27,7 +35,7 @@ module async_2_phase_hs # (
 
     // Source side logic
 
-    sync3 src_side_ack_sync (
+    sync src_side_ack_sync (
         .i_clk(i_src_clk),
         .i_reset_n(i_src_reset_n),
         .i_d(ack),
@@ -52,7 +60,7 @@ module async_2_phase_hs # (
 
     // Destination side logic
 
-    sync3 dst_side_req_sync (
+    sync dst_side_req_sync (
         .i_clk(i_dst_clk),
         .i_reset_n(i_dst_reset_n),
         .i_d(req),

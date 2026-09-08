@@ -24,9 +24,9 @@
 //   WIDTH, DEPTH, N_WRITES, WR_CLK_PS, RD_CLK_PS, WR_BIAS, RD_BIAS
 //
 // Example (Icarus Verilog), run from the fifos/ directory:
-//   iverilog -g2012 -o sim tb/tb_async_fifo.sv async_fifo.sv ../synchronizers/sync3.sv && vvp sim
+//   iverilog -g2012 -o sim tb/tb_async_fifo.sv async_fifo.sv ../synchronizers/sync.sv && vvp sim
 //   iverilog -g2012 -Ptb_async_fifo.WR_CLK_PS=4000 -Ptb_async_fifo.RD_CLK_PS=20000 \
-//            -o sim tb/tb_async_fifo.sv async_fifo.sv ../synchronizers/sync3.sv && vvp sim
+//            -o sim tb/tb_async_fifo.sv async_fifo.sv ../synchronizers/sync.sv && vvp sim
 //
 // Pass criterion: "RESULT: PASS" with errors == 0 and the model fully drained.
 // -----------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // tb_sync_fifo — self-checking testbench for a synchronous FIFO
 //
 // Drives any FIFO that presents this valid/ready interface:
-//   #(WIDTH, DEPTH, data_t) (i_clk, i_reset_n,
+//   #(WIDTH, DEPTH, dtype_t) (i_clk, i_reset_n,
 //     i_wr_valid, o_wr_ready, i_wr_data,
 //     o_rd_valid, i_rd_ready, o_rd_data, o_full, o_empty)
 // The module under test is selected by the FIFO_MODULE macro (default
@@ -35,7 +35,7 @@
 // Compile defines:
 //   +define+FIFO_MODULE=<name>  module under test (default sync_fifo)
 //   +define+SIM                 enable the DUT's elaboration guard assertion
-//   +define+USE_STRUCT          drive a packed-struct type through data_t
+//   +define+USE_STRUCT          drive a packed-struct type through dtype_t
 //
 // Example (Icarus Verilog), run from the fifos/ directory:
 //   iverilog -g2012 -DSIM -o sim tb/tb_sync_fifo.sv sync_fifo.sv && vvp sim
@@ -90,7 +90,7 @@ module tb_sync_fifo;
   int unsigned n_pushed = 0;
   int unsigned n_popped = 0;
 
-  `FIFO_MODULE #(.WIDTH(WIDTH), .DEPTH(DEPTH), .data_t(DT)) dut (
+  `FIFO_MODULE #(.WIDTH(WIDTH), .DEPTH(DEPTH), .dtype_t(DT)) dut (
     .i_clk      (clk),
     .i_reset_n  (rst_n),
     .i_wr_valid (i_wr_valid),
@@ -105,7 +105,7 @@ module tb_sync_fifo;
 
   always #5 clk = ~clk;
 
-  // Golden reference model. Bit-vectors so the queue is valid for any data_t.
+  // Golden reference model. Bit-vectors so the queue is valid for any dtype_t.
   logic [DW-1:0] model_q [$];
 
   function automatic DT rand_dt();
@@ -322,7 +322,7 @@ module tb_sync_fifo;
     drain_all();
 
     $display("--------------------------------------------------");
-    $display("data_t width=%0d  pushed=%0d popped=%0d remaining=%0d errors=%0d",
+    $display("dtype_t width=%0d  pushed=%0d popped=%0d remaining=%0d errors=%0d",
              DW, n_pushed, n_popped, model_q.size(), errors);
     if (errors == 0 && model_q.size() == 0)
       $display("RESULT: PASS");

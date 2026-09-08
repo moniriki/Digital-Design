@@ -1,5 +1,12 @@
-module serial_to_parallel_convertor # (
-    parameter int unsigned DATA_WIDTH = 4,
+// Serial-in, parallel-out deserializer with valid/ready on both sides.
+//
+// Shifts one bit per cycle into a DATA_WIDTH-bit register, LSB first (first bit
+// in becomes o_data[0]). After DATA_WIDTH bits o_valid asserts and o_ready
+// drops until the sink takes the word (i_ready), which clears the count. A bit
+// is accepted only while o_ready is high, so a full word already waiting is
+// never overwritten. Throughput is one word every DATA_WIDTH+1 cycles.
+module serial_to_parallel_converter #(
+    parameter  int unsigned DATA_WIDTH      = 4,
     localparam int unsigned DATA_WIDTH_LOG2 = $clog2(DATA_WIDTH)
 ) (
     input logic i_clk,

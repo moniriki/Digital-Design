@@ -7,15 +7,15 @@
 //     the two select flops are never both high, the two gated clocks never
 //     overlap  (i_sel must be held >= ~2*sync_depth cycles of both clocks)
 //   - reset with i_sel already = 1 (select clk1 immediately) does not glitch
-//     -- exercises the sync3s / sync3r reset-value consistency
+//     -- exercises the sync reset-value consistency
 //   - both clocks must be running for a switch to complete: requesting a switch
 //     to a stopped clock parks o_clk off; it recovers when the clock returns
 //
-// Deps: clkgate.sv clkor.sv ../synchronizers/sync3r.sv ../synchronizers/sync3s.sv
+// Deps: clkgate.sv clkor.sv ../synchronizers/sync.sv
 //
 // Run from clock_common/:
 //   iverilog -g2012 -o sim tb/tb_anti_glitch_clkmux.sv anti_glitch_clkmux.sv \
-//     clkgate.sv clkor.sv ../synchronizers/sync3r.sv ../synchronizers/sync3s.sv \
+//     clkgate.sv clkor.sv ../synchronizers/sync.sv \
 //     && vvp sim
 // -----------------------------------------------------------------------------
 `timescale 1ps/1ps

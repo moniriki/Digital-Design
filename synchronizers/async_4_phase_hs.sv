@@ -2,7 +2,7 @@
 // implementation is an FSM instead. This implementation assumes
 // reset sequencing has been completed on source and destination
 // resets, otherwise unintended consequences can occur.
-module async_4_phase_hs # (
+module async_4_phase_hs #(
     parameter type dtype_t = logic
 ) (
     input logic i_src_clk,
@@ -25,7 +25,7 @@ module async_4_phase_hs # (
 
     // Source side logic
 
-    sync3 src_side_ack_sync (
+    sync src_side_ack_sync (
         .i_clk(i_src_clk),
         .i_reset_n(i_src_reset_n),
         .i_d(ack),
@@ -52,7 +52,7 @@ module async_4_phase_hs # (
 
     // Destination side logic
 
-    sync3 dst_side_req_sync (
+    sync dst_side_req_sync (
         .i_clk(i_dst_clk),
         .i_reset_n(i_dst_reset_n),
         .i_d(req),

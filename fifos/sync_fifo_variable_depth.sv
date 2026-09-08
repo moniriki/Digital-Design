@@ -1,8 +1,14 @@
-module sync_fifo_variable_depth # (
-    parameter int unsigned WIDTH = 32,
-    parameter int unsigned DEPTH = 8,
-    parameter type dtype_t = logic [WIDTH-1:0],
-    localparam int unsigned PTR_W = (DEPTH > 1) ? $clog2(DEPTH) : 1,
+// Single-clock FIFO for an arbitrary DEPTH (not just powers of two).
+//
+// Because non-power-of-two pointers cannot wrap for free, occupancy is tracked
+// with an explicit count register instead of the extra pointer MSB that
+// sync_fifo uses. First-word-fall-through: o_rd_data shows the head whenever
+// o_rd_valid. Pass a struct via dtype_t to carry typed payloads.
+module sync_fifo_variable_depth #(
+    parameter  int unsigned WIDTH   = 32,
+    parameter  int unsigned DEPTH   = 8,
+    parameter  type         dtype_t = logic [WIDTH-1:0],
+    localparam int unsigned PTR_W   = (DEPTH > 1) ? $clog2(DEPTH) : 1,
     localparam int unsigned COUNT_W = PTR_W + 1
 ) (
     input logic i_clk,

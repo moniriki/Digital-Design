@@ -1,9 +1,24 @@
-module gearbox_data_word_convertor # (
-    parameter int unsigned SRC_DATA_WIDTH = 8,
-    parameter int unsigned DST_DATA_WIDTH = 16,
+// Data-width gearbox: packs variable-size input beats into fixed-width output
+// words. Each accepted input beat carries i_data_size valid bytes (low bytes of
+// i_data); the module accumulates them in a shift register and emits a full
+// DST_DATA_WIDTH-bit word, little-endian, whenever at least that many bits are
+// buffered. Works in both directions (SRC < DST, SRC > DST, or equal).
+//
+// The classic use is rate matching -- e.g. a producer that emits 12-14 bytes
+// per beat feeding a consumer that wants 16-byte words.
+//
+// Notes / constraints:
+//   * i_data_size must be in 0 .. SRC_DATA_WIDTH/8; it is not range-checked.
+//   * o_ready is conservative: it holds room for a full SRC_DATA_WIDTH beat
+//     regardless of the actual i_data_size, so the shift register never
+//     overflows.
+//   * The shift register is 2*max(SRC,DST) bits: one word plus a full beat.
+module gearbox_data_word_converter #(
+    parameter  int unsigned SRC_DATA_WIDTH       = 8,
+    parameter  int unsigned DST_DATA_WIDTH       = 16,
     localparam int unsigned SRC_DATA_WIDTH_BYTES = SRC_DATA_WIDTH / 8,
-    localparam int unsigned SRC_DATA_WIDTH_LOG2 = $clog2(SRC_DATA_WIDTH_BYTES),
-    localparam int unsigned SHIFT_QUEUE_SIZE = (SRC_DATA_WIDTH > DST_DATA_WIDTH) ? (2 * SRC_DATA_WIDTH) : (2 * DST_DATA_WIDTH),
+    localparam int unsigned SRC_DATA_WIDTH_LOG2  = $clog2(SRC_DATA_WIDTH_BYTES),
+    localparam int unsigned SHIFT_QUEUE_SIZE     = (SRC_DATA_WIDTH > DST_DATA_WIDTH) ? (2 * SRC_DATA_WIDTH) : (2 * DST_DATA_WIDTH),
     localparam int unsigned SHIFT_QUEUE_SIZE_LOG2 = $clog2(SHIFT_QUEUE_SIZE)
 ) (
     input logic i_clk,
@@ -39,7 +54,7 @@ module gearbox_data_word_convertor # (
     always_comb begin
         shift_offset = shift_offset_q;
         shift_queue = shift_queue_q;
-        
+
         if (i_valid && o_ready) begin
             shift_queue |= (data_masked << shift_offset);
             shift_offset += (i_data_size << 3);

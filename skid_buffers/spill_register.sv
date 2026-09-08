@@ -1,3 +1,9 @@
+// Spill register: cuts only the ready (backpressure) path. o_valid/o_data pass
+// through combinationally from the input; o_ready is registered. When the
+// downstream stalls with a beat present, that beat "spills" into the internal
+// register and o_ready drops for one cycle. Cheaper than a full skid buffer
+// (one register, no forward-path timing cut) and still full throughput, but it
+// does not isolate o_valid/o_data from the upstream timing.
 module spill_register #(
     parameter int unsigned DATA_WIDTH = 32
 ) (

@@ -1,6 +1,11 @@
+// Divide-by-2 clock: a single flop toggling on its own inverted output, so
+// o_clk is a 50% duty clock at half the input frequency. Async active-low
+// reset parks it low. o_clk comes straight off a flop (no combinational gating)
+// so it is clean to use as a clock. FOUNDRY_LIBCELL swaps in explicit
+// inverter + resettable-DFF cells.
 module clkdiv2 (
-    input logic i_clk,
-    input logic i_reset_n,
+    input  logic i_clk,
+    input  logic i_reset_n,
     output logic o_clk
 );
     logic clk_div_2;

@@ -5,7 +5,7 @@
 // The obvious PD STA guarantees on setup/hold timing
 // must be met for this module to function correctly
 // in silicon.
-module fast2slow_sync_crossing # (
+module fast2slow_sync_crossing #(
     parameter type dtype_t = logic
 ) (
     input logic i_src_clk,

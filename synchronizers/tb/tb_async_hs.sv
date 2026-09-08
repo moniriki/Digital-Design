@@ -21,9 +21,9 @@
 //   DW, SRC_PS, DST_PS, N_XFERS, SRC_BIAS, DST_BIAS
 //
 // Example (Icarus Verilog), from the synchronizers/ directory:
-//   iverilog -g2012 -o sim tb/tb_async_hs.sv async_4_phase_hs.sv sync3.sv && vvp sim
+//   iverilog -g2012 -o sim tb/tb_async_hs.sv async_4_phase_hs.sv sync.sv && vvp sim
 //   iverilog -g2012 -Ptb_async_hs.SRC_PS=3000 -Ptb_async_hs.DST_PS=30000 \
-//            -o sim tb/tb_async_hs.sv async_4_phase_hs.sv sync3.sv && vvp sim
+//            -o sim tb/tb_async_hs.sv async_4_phase_hs.sv sync.sv && vvp sim
 //
 // Pass criterion: "RESULT: PASS" (errors == 0, model drained, sent == recv).
 // -----------------------------------------------------------------------------

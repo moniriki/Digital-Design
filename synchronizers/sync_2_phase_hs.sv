@@ -1,7 +1,7 @@
 // This module must only be used for synchronous, rational
 // clock domain crossings. Technically speaking, this is more
 // of a control flow module rather than a true async CDC.
-module sync_2_phase_hs # (
+module sync_2_phase_hs #(
     parameter type dtype_t = logic
 ) (
     input logic i_src_clk,
