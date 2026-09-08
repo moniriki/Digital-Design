@@ -61,7 +61,8 @@ overrides (widths, depths, cycle counts) and macro selectors (e.g.
 | `async_fifo` | `fifos/tb/tb_async_fifo.sv` | dual-clock, Gray-code check, occupancy model |
 | `sync` | via `async_fifo` / `anti_glitch_clkmux` | — |
 | `async_2_phase_hs`, `async_4_phase_hs`, `async_4_phase_hs_fsm`, `sync_2_phase_hs`, `sync_4_phase_hs` | `synchronizers/tb/tb_async_hs.sv` | dual-clock data-integrity model |
-| `pulse_sync`, `fast2slow_sync_crossing` | — | reviewed, no dedicated testbench yet |
+| `pulse_sync` | `synchronizers/tb/tb_pulse_sync.sv` | dual-clock, count conservation, drop / `o_error` on overrun, one-cycle strobe |
+| `fast2slow_sync_crossing` | — | synchronous rational crossing; correctness depends on PD/STA closure between the related clocks, per the module header |
 | `skid_buf`, `spill_register` | `skid_buffers/tb/tb_skid_buffer.sv` | stream integrity + stall stability |
 | `lfsr` | `common/tb/tb_lfsr.sv` | next-state model, measured cycle length, lock-up |
 | `parallel_to_serial_converter`, `serial_to_parallel_converter` | `common/tb/tb_serdes.sv` | individual + loopback |
