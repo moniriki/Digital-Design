@@ -12,7 +12,7 @@ it safely, and — where practical — comes with a self-checking testbench.
 |------------------|----------|
 | `arbiters/`      | Priority, round-robin (masked and pointer), matrix-LRU, time-slice, and a binary-tree round-robin arbiter |
 | `fifos/`         | Synchronous FIFO (power-of-two pointers), synchronous FIFO for arbitrary depth (counter based), and a Gray-code async FIFO |
-| `synchronizers/` | Multi-flop synchronizer, 2-/4-phase request-ack CDC handshakes (hand-rolled and FSM), a fast-to-slow synchronous crossing, and a Gray-counter pulse synchronizer |
+| `synchronizers/` | Multi-flop synchronizer, 2-/4-phase request-ack CDC handshakes (hand-rolled and FSM), a fast-to-slow synchronous crossing, a Gray-counter pulse synchronizer, and a stretch-and-resync pulse crossing |
 | `skid_buffers/`  | Full-throughput skid buffer and a lighter spill register |
 | `clock_common/`  | Clock inverter / OR / gate, ripple and single-counter dividers, combinational 2:1 and 4:1 clock muxes, and a glitchless clock mux |
 | `common/`        | LFSR, parallel/serial converters, and a variable-size-to-fixed-size data-width gearbox |
@@ -62,6 +62,7 @@ overrides (widths, depths, cycle counts) and macro selectors (e.g.
 | `sync` | via `async_fifo` / `anti_glitch_clkmux` | — |
 | `async_2_phase_hs`, `async_4_phase_hs`, `async_4_phase_hs_fsm`, `sync_2_phase_hs`, `sync_4_phase_hs` | `synchronizers/tb/tb_async_hs.sv` | dual-clock data-integrity model |
 | `pulse_sync` | `synchronizers/tb/tb_pulse_sync.sv` | dual-clock, count conservation, drop / `o_error` on overrun, one-cycle strobe |
+| `pulse_stretch_sync` | `synchronizers/tb/tb_pulse_stretch_sync.sv` | dual-clock, count conservation, one-cycle strobe (for source pulses sparse enough to respect the clock ratio) |
 | `fast2slow_sync_crossing` | — | synchronous rational crossing; correctness depends on PD/STA closure between the related clocks, per the module header |
 | `skid_buf`, `spill_register` | `skid_buffers/tb/tb_skid_buffer.sv` | stream integrity + stall stability |
 | `lfsr` | `common/tb/tb_lfsr.sv` | next-state model, measured cycle length, lock-up |
