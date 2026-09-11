@@ -5,7 +5,7 @@
 module population_count #(
     parameter int unsigned WIDTH = 32,
     localparam int unsigned CNT_W = $clog2(WIDTH) + 1,
-    localparam int unsigned NUM_LEVELS = $clog2(WIDTH) + 1
+    localparam int unsigned NUM_TREE_LEVELS = $clog2(WIDTH) + 1
 ) (
     input logic [WIDTH-1:0] i_data,
     output logic [CNT_W-1:0] o_population_cnt
@@ -15,14 +15,14 @@ module population_count #(
     int unsigned NUM_PARTIAL_SUMS;
 
     // Some unused bits
-    logic [CNT_W-1:0] partial_sums [0:NUM_LEVELS-1][0:WIDTH-1];
+    logic [CNT_W-1:0] partial_sums [0:NUM_TREE_LEVELS-1][0:WIDTH-1];
 
     always_comb begin
         for (int i = 0; i < WIDTH; i++) begin
             partial_sums[0][i] = i_data[i];
         end
 
-        for (int lvl = 1; lvl < NUM_LEVELS; lvl++) begin
+        for (int lvl = 1; lvl < NUM_TREE_LEVELS; lvl++) begin
             DENOMINATOR = (2 ** lvl);
             NUM_PARTIAL_SUMS = (WIDTH / DENOMINATOR);
 
@@ -34,7 +34,7 @@ module population_count #(
 
     end
 
-    assign o_population_cnt = partial_sums[NUM_LEVELS-1][0];
+    assign o_population_cnt = partial_sums[NUM_TREE_LEVELS-1][0];
 
 `ifdef SIM
     initial assert (((WIDTH) & (WIDTH - 1)) == 0)
