@@ -4,7 +4,7 @@
 module pulse_stretch_sync #(
     parameter int unsigned SRC_FREQ = 2,
     parameter int unsigned DST_FREQ = 1,
-    localparam int unsigned CDC_RATIO = (SRC_FREQ >= DST_FREQ) ? (2 * ((SRC_FREQ + DST_FREQ - 1) / DST_FREQ)) : 1,
+    localparam int unsigned CDC_RATIO = (SRC_FREQ >= DST_FREQ) ? (2 * ((SRC_FREQ + DST_FREQ - 1) / DST_FREQ)) : 2,
     localparam int unsigned STRETCH_CNT = (CDC_RATIO == 1) ? 1 : $clog2(CDC_RATIO)
 ) (
     input  logic i_src_clk,
