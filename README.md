@@ -10,7 +10,7 @@ it safely, and — where practical — comes with a self-checking testbench.
 
 | Directory        | Contents |
 |------------------|----------|
-| `arbiters/`      | Priority, round-robin (masked and pointer), matrix-LRU, time-slice, and a binary-tree round-robin arbiter |
+| `arbiters/`      | Priority, weighted-priority, round-robin (masked and pointer), matrix-LRU, time-slice, and a binary-tree round-robin arbiter |
 | `fifos/`         | Synchronous FIFO (power-of-two pointers), synchronous FIFO for arbitrary depth (counter based), and a Gray-code async FIFO |
 | `synchronizers/` | Multi-flop synchronizer, 2-/4-phase request-ack CDC handshakes (hand-rolled and FSM), a fast-to-slow synchronous crossing, a Gray-counter pulse synchronizer, and a stretch-and-resync pulse crossing |
 | `skid_buffers/`  | Full-throughput skid buffer and a lighter spill register |
@@ -54,6 +54,7 @@ overrides (widths, depths, cycle counts) and macro selectors (e.g.
 | Module | Testbench | Notes |
 |--------|-----------|-------|
 | `priority_arb` | `arbiters/tb/tb_priority_arb.sv` | golden state machine, one-hot / hold-until-taken |
+| `weighted_priority_arb` | `arbiters/tb/tb_weighted_priority_arb.sv` | highest-weight-wins model with lowest-index tiebreak; directed + random; WIDTH=1 corner case |
 | `round_robin_arb`, `round_robin_arb_ptr` | `arbiters/tb/tb_round_robin_arb.sv` | rotating-pointer model + starvation bound |
 | `nxn_matrix_lru_arb` | `arbiters/tb/tb_nxn_matrix_lru_arb.sv` | ordered-list LRU model + fairness bound |
 | `time_slice_arb` | `arbiters/tb/tb_time_slice_arb.sv` | slot model + one-grant-per-frame |
