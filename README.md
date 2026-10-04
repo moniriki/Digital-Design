@@ -36,8 +36,8 @@ it safely, and — where practical — comes with a self-checking testbench.
 
 ## Simulation
 
-Testbenches are written for **Icarus Verilog** (`iverilog -g2012`) and every
-synthesizable file also lints clean under **Verilator** (`verilator
+Testbenches are written for **Icarus Verilog** (`iverilog -g2012`), and the
+synthesizable sources are also linted with **Verilator** (`verilator
 --lint-only -Wall`). Each testbench header lists its exact command line; the
 general form, run from a topic directory, is:
 
