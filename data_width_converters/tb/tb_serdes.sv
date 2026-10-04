@@ -12,7 +12,7 @@
 //   - loopback (p2s -> s2p): words in == words out, in order
 //   - output valid/data stable while stalled; count is exact (no loss/dup)
 //
-// Run from common/:
+// Run from data_width_converters/:
 //   iverilog -g2012 -o sim tb/tb_serdes.sv \
 //            parallel_to_serial_converter.sv serial_to_parallel_converter.sv && vvp sim
 //   iverilog -g2012 -Ptb_serdes.DATA_WIDTH=8 -o sim tb/tb_serdes.sv \

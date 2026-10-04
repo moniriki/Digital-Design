@@ -25,7 +25,7 @@
 // Exercised for upsizing (SRC < DST), downsizing (SRC > DST), equal widths and
 // non-power-of-two byte counts by overriding SRC_DATA_WIDTH / DST_DATA_WIDTH.
 //
-// Run from data_width_convertors/:
+// Run from data_width_converters/:
 //   iverilog -g2012 -o sim tb/tb_packing_gearbox.sv packing_gearbox.sv && vvp sim
 //   iverilog -g2012 -Ptb_packing_gearbox.SRC_DATA_WIDTH=128 \
 //            -Ptb_packing_gearbox.DST_DATA_WIDTH=32 \

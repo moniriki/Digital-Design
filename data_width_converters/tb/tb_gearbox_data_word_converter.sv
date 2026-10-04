@@ -16,7 +16,7 @@
 // Exercised for upsizing (SRC < DST), downsizing (SRC > DST) and equal widths
 // by overriding SRC_DATA_WIDTH / DST_DATA_WIDTH.
 //
-// Run from common/:
+// Run from data_width_converters/:
 //   iverilog -g2012 -o sim tb/tb_gearbox_data_word_converter.sv \
 //            gearbox_data_word_converter.sv && vvp sim
 //   iverilog -g2012 -Ptb_gearbox_data_word_converter.SRC_DATA_WIDTH=128 \
