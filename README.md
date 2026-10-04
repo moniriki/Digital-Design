@@ -73,7 +73,7 @@ overrides (widths, depths, cycle counts) and macro selectors (e.g.
 | `bin2onehot`, `onehot2bin` | — | exhaustive round-trip check (every index, power-of-2 and non-power-of-2 widths); no testbench committed |
 | `parallel_to_serial_converter`, `serial_to_parallel_converter` | `data_width_convertors/tb/tb_serdes.sv` | individual + loopback |
 | `gearbox_data_word_converter` | `data_width_convertors/tb/tb_gearbox_data_word_converter.sv` | byte-queue model, up / down / equal width |
-| `packing_gearbox` | — | byte-queue model with population-count packing of masked source bytes, up / down / equal width, valid/ready both sides; verified but no testbench committed |
+| `packing_gearbox` | `data_width_convertors/tb/tb_packing_gearbox.sv` | byte-queue model of enabled bytes in lane order, exact valid-vs-occupancy check, back-pressure fill, mid-run reset; up / down / equal / non-power-of-2 widths |
 | `clkdiv2/4/8`, `clkdiv_sync` | `clock_common/tb/tb_clkdiv.sv` | frequency / duty / phase alignment |
 | `clkgate` | `clock_common/tb/tb_clkgate.sv` | glitch-free enable |
 | `clkmux2`, `clkmux4` | `clock_common/tb/tb_clkmux.sv` | selection + quantified glitch behavior |
