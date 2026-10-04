@@ -15,7 +15,7 @@ it safely, and — where practical — comes with a self-checking testbench.
 | `synchronizers/` | Multi-flop synchronizer, 2-/4-phase request-ack CDC handshakes (hand-rolled and FSM), a fast-to-slow synchronous crossing, a Gray-counter pulse synchronizer, and a stretch-and-resync pulse crossing |
 | `skid_buffers/`  | Full-throughput skid buffer and a lighter spill register |
 | `clock_common/`  | Clock inverter / OR / gate, ripple and single-counter dividers, combinational 2:1 and 4:1 clock muxes, and a glitchless clock mux |
-| `common/`        | LFSR, a population counter (naive and O(log2(N)) tree), and a min/max reduction tree |
+| `common/`        | LFSR, a population counter (naive and O(log2(N)) tree), a min/max reduction tree, and binary/one-hot encoders |
 | `data_width_convertors/` | Parallel/serial converters, a variable-size-to-fixed-size data-width gearbox, and a byte-packing gearbox (holes removed via population count) |
 | `*/tb/`          | Self-checking testbenches (kept out of the synthesizable path) |
 
@@ -70,6 +70,7 @@ overrides (widths, depths, cycle counts) and macro selectors (e.g.
 | `lfsr` | `common/tb/tb_lfsr.sv` | next-state model, measured cycle length, lock-up |
 | `population_count`, `population_count_naive` | `common/tb/tb_population_count.sv` | cross-checked against each other and `$countones()`; tree is power-of-2 only |
 | `min_max_tree` | `common/tb/tb_min_max_tree.sv` | linear-scan golden model; directed corner positions + random; power-of-2 only |
+| `bin2onehot`, `onehot2bin` | — | exhaustive round-trip check (every index, power-of-2 and non-power-of-2 widths); no testbench committed |
 | `parallel_to_serial_converter`, `serial_to_parallel_converter` | `data_width_convertors/tb/tb_serdes.sv` | individual + loopback |
 | `gearbox_data_word_converter` | `data_width_convertors/tb/tb_gearbox_data_word_converter.sv` | byte-queue model, up / down / equal width |
 | `packing_gearbox` | — | byte-queue model with population-count packing of masked source bytes, up / down / equal width, valid/ready both sides; verified but no testbench committed |
